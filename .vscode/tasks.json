@@ -33,9 +33,18 @@
 				"npm: dev-ng",
 				"npm: dev-node"
 			],
-			"detail":"runs both dev-ng and dev-node",
+			"detail": "runs both dev-ng and dev-node",
+			"problemMatcher": [],
+			"isBackground": true
+		},
+		{
+			"type": "npm",
+			"script": "release",
 			"problemMatcher": [
+				"$tsc-watch"
 			],
+			"label": "npm: release",
+			"detail": "npm run build && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/mitchashvim.git master",
 			"isBackground": true
 		}
 	]

@@ -41,10 +41,10 @@ async function startup() {
     initExpress(app, {
         dataProvider
     });
-    app.use(express.static('dist/mitchashvim'));
+    app.use(express.static('mitchashvim'));
     app.use('/*', async (req, res) => {
         try {
-            res.send(fs.readFileSync('dist/mitchashvim/index.html').toString());
+            res.send(fs.readFileSync('mitchashvim/index.html').toString());
         } catch (err) {
             res.sendStatus(500);
         }
