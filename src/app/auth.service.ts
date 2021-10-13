@@ -39,7 +39,7 @@ export class AuthService {
         if (result!) {
             return (jwt.sign(result, getJwtTokenSignKey()));
         }
-        throw new Error("Invalid Sign In Info");
+        throw new Error("משתמש או סיסמה לא מוכרים");
     }
     setAuthToken(token: string) {
         this.remult.setUser(new JwtHelperService().decodeToken(token));
