@@ -1,4 +1,5 @@
-<app-address-input [field]="site.$.address" #addressInput></app-address-input>
+<app-address-input [field]="site.$.address" #addressInput [(geocodeInformation)]="site.addressApiResult">
+</app-address-input>
 <pre>
-  {{site.addressHelper.getGeocodeInformation().getCity()}}
+  {{site.addressApiResult.getCity()}}
 </pre>

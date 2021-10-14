@@ -9,19 +9,14 @@ import { Site } from '../sites/site';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit, AfterViewInit {
+export class HomeComponent implements OnInit {
 
   constructor(private remult: Remult) { }
-  ngAfterViewInit(): void {
-    this.addressInput.initAddress(x => {
-      this.site.addressApiResult = new GeocodeInformation(x.autoCompleteResult!).saveToString();
 
-    });
-  }
-  
+
   @ViewChild('addressInput', { static: false }) addressInput!: AddressInputComponent;
 
-  
+
   result: any = {};
   site = this.remult.repo(Site).create();
 

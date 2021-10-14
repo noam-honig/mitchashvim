@@ -6,12 +6,13 @@ import { ValueListFieldType } from "remult";
 export class DeliveryStatus {
     static setup = new DeliveryStatus("הקמה");
     static readyForDelivery = new DeliveryStatus("מוכן למשלוח");
+    static toSchedule = new DeliveryStatus("לתאום"); //יש תאריך מהנהג אבל עוד לא אושר על ידי הלקוח
     static scheduled = new DeliveryStatus("תואם");
-    static pickedUp = new DeliveryStatus("נאסף");
-    static delivered = new DeliveryStatus("נמסר");
-    static canceled = new DeliveryStatus("בוטל");
+    static completed = new DeliveryStatus("הושלם");
+    static canceled = new DeliveryStatus("בוטל על ידי מתחשבים");
+    static problem = new DeliveryStatus("בעיה");
 
     constructor(public caption: string) {
 
     }
-}
+} 

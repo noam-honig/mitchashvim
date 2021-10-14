@@ -1,38 +1,22 @@
-import { FieldRef, Remult } from "remult";
-
-export class AddressHelper {
-    getAddress() {
-        return this.addressColumn().value;
-    }
-
-    constructor(private remult: Remult, private addressColumn: () => FieldRef<any, string>, private apiResultColumn: () => FieldRef<any, string>) {
+import { FieldRef, FieldType, Remult } from "remult";
 
 
+@FieldType({
+    valueConverter: {
+        fromJson: (x: GeocodeResult) => {
+            if (typeof x === "string")
+                x = JSON.parse(x);
+            return new GeocodeInformation(x);
+        },
+        toJson: x => x.info
     }
-
-    private _lastString!: string;
-    private _lastGeo!: GeocodeInformation;
-    openWaze() {
-        window.open('waze://?ll=' + this.getGeocodeInformation().getLongLat() + "&q=" + encodeURI(this.addressColumn().value) + '&navigate=yes');
-    }
-
-    getGeocodeInformation() {
-        if (this._lastString == this.apiResultColumn().value)
-            return this._lastGeo ? this._lastGeo : new GeocodeInformation(undefined!);
-        this._lastString = this.apiResultColumn().value;
-        return this._lastGeo = GeocodeInformation.fromString(this.apiResultColumn().value);
-    }
-    ok() {
-        return this.getGeocodeInformation().ok();
-    }
-    location() {
-        return this.getGeocodeInformation().location();
-    }
-}
+})
 export class GeocodeInformation {
-    constructor(public info: GeocodeResult) {
-        if (!this.info)
+    info!: GeocodeResult;
+    constructor(info?: GeocodeResult) {
+        if (!info)
             this.info = { results: [], status: 'none' };
+        else this.info = info;
     }
     getAddress() {
         if (!this.ok())

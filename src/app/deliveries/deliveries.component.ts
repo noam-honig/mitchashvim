@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { GridSettings, openDialog } from '@remult/angular';
-import { Remult } from 'remult';
+import { DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
+import { FieldMetadata, FieldsMetadata, Remult } from 'remult';
 import { InputAreaComponent } from '../common/input-area/input-area.component';
+import { EditDeliveryComponent, editStrategy } from '../edit-delivery/edit-delivery.component';
+import { columnOrderAndWidthSaver } from '../shared/columnOrderSaver';
 import { Delivery } from './delivery';
+import { DeliveryStatus } from './delivery-status';
 
 @Component({
   selector: 'app-deliveries',
@@ -14,6 +17,17 @@ export class DeliveriesComponent implements OnInit {
   constructor(private remult: Remult) { }
 
   deliveries = new GridSettings(this.remult.repo(Delivery), {
+    //allowCrud: true,
+    allowInsert: false,
+    allowDelete: false,
+    knowTotalRows: true,
+    numOfColumnsInGrid: Delivery.colsInGrid,
+
+    columnSettings: d => {
+      return Delivery.deliveryColumns(d);
+    },
+
+
     gridButtons: [{
       textInMenu: () => 'משלוח חדש',
       icon: 'add',
@@ -28,26 +42,33 @@ export class DeliveriesComponent implements OnInit {
     rowButtons: [{
       icon: 'edit',
       textInMenu: () => 'עדכן משלוח',
-      click: (d) => this.editDelivery(d)
-    }]
+      click: (d) => this.editDelivery(d),
+      showInLine: true
+    },
+    {
+      name: 'סמן כמוכן למשלוח',
+      click: d => {
+        d.status = DeliveryStatus.readyForDelivery;
+        d.save();
+      }
+    }
+    ]
   });
 
-  private editDelivery(d: Delivery, ok?: () => {}) {
-    openDialog(InputAreaComponent, x => x.args = {
-      ok: async () => {
+  private editDelivery(delivery: Delivery, ok?: () => void) {
+    openDialog(EditDeliveryComponent, x => x.args = {
+      delivery,
+      strategy: editStrategy.mitchashvim,
+      ok: () => {
         if (ok)
           ok();
-      },
-      fields: () => [
-        [d.$.type, d.$.source, d.$.target],
-        [d.$.surfaces, d.$.laptops, d.$.screens, d.$.computers, d.$.other],
-        d.$.notes
-      ],
-      title: 'משלוח חדש'
+      }
     });
+
   }
 
   ngOnInit(): void {
+     new columnOrderAndWidthSaver(this.deliveries).load("deliveries");
 
   }
 

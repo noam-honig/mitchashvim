@@ -30,12 +30,7 @@ export class EditSiteComponent implements OnInit {
       ]
     });
   }
-  ngAfterViewInit(): void {
-    this.addressInput.initAddress(x => {
-      this.args.site.addressApiResult = new GeocodeInformation(x.autoCompleteResult!).saveToString();
 
-    });
-  }
   async confirm() {
     await this.args.site.save();
     if (this.args.ok)
@@ -47,6 +42,5 @@ export class EditSiteComponent implements OnInit {
     this.ref.close();
   }
 
-  @ViewChild('addressInput', { static: false }) addressInput!: AddressInputComponent;
 
 }

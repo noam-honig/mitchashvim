@@ -3,9 +3,11 @@ import { Injectable } from '@angular/core';
 
 
 
-export const Roles = { 
+export const Roles = {
     admin: 'admin',
-    sites:'sites'
+    sites: 'sites',
+    deliveryManager: 'deliveryManager',
+    mitchashvim: 'mitchashvim'
 }
 
 
@@ -25,3 +27,5 @@ export class SiteGuard extends AuthenticatedInGuard {
         return Roles.sites;
     }
 }
+
+

@@ -1,7 +1,8 @@
-import { Component, OnInit, Input, ElementRef, ViewChild, NgZone, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild, NgZone, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { ErrorStateMatcher } from '@angular/material/core';
 
 import { FieldRef } from 'remult';
+
 import { getAddress, Location, getCity, GeocodeInformation, GeocodeResult } from '../shared/googleApiHelpers';
 
 /// <reference types="@types/googlemaps" />
@@ -14,26 +15,25 @@ import { getAddress, Location, getCity, GeocodeInformation, GeocodeResult } from
 export class AddressInputComponent implements AfterViewInit {
 
   @Input() field!: FieldRef<any, string>;
-  @Input() autoInit: boolean = false;
+  @Input() autoInit: boolean = true;
   @Input() caption!: string;
+  @Input() geocodeInformation!: GeocodeInformation;
+  @Output() geocodeInformationChange = new EventEmitter<GeocodeInformation>()
+  @Input() city: string = '';
+  @Output() cityChange = new EventEmitter<string>()
   constructor(private zone: NgZone) { }
   initAddressAutoComplete = false;
   //@ts-ignore
   destroyMe!: google.maps.MapsEventListener;
 
   @ViewChild('addressInput', { static: false }) addressInput!: ElementRef;
-  initAddress(consumer: (x: {
-    addressByGoogle: string,
-    location: Location,
-    city: string,
-    autoCompleteResult: GeocodeResult
-  }) => void) {
+  initAddress(consumer: (x: GeocodeInformation) => void) {
     if (this.initAddressAutoComplete)
       return;
     this.initAddressAutoComplete = true;
-    
+
     //@ts-ignore
-    const autocomplete = new google.maps.places.SearchBox(this.addressInput.nativeElement, 
+    const autocomplete = new google.maps.places.SearchBox(this.addressInput.nativeElement,
     );
     //@ts-ignore
     this.destroyMe = google.maps.event.addListener(autocomplete, 'places_changed', () => {
@@ -48,32 +48,28 @@ export class AddressInputComponent implements AfterViewInit {
           formatted_address: this.field.value,
           address_components: place.address_components
         });
-        consumer({
-          autoCompleteResult: {
-            results: [{
-              address_components: place.address_components!,
-              formatted_address: place.formatted_address!,
-              partial_match: false,
-              geometry: {
-                location_type: '',
-                location: toLocation(place.geometry!.location),
-                viewport: {
-                  northeast: toLocation(place.geometry!.viewport.getNorthEast()),
-                  southwest: toLocation(place.geometry!.viewport.getSouthWest())
-                }
-              },
-              place_id: place.place_id!,
-              types: place.types!
-            }],
-            status: "OK"
-          },
-          location: {
-            lat: place.geometry!.location.lat(),
-            lng: place.geometry!.location.lng()
-          },
-          addressByGoogle: getAddress(place),
-          city: getCity(place.address_components!)
+        let g = new GeocodeInformation({
+          results: [{
+            address_components: place.address_components!,
+            formatted_address: place.formatted_address!,
+            partial_match: false,
+            geometry: {
+              location_type: '',
+              location: toLocation(place.geometry!.location),
+              viewport: {
+                northeast: toLocation(place.geometry!.viewport.getNorthEast()),
+                southwest: toLocation(place.geometry!.viewport.getSouthWest())
+              }
+            },
+            place_id: place.place_id!,
+            types: place.types!
+          }],
+          status: "OK"
         });
+        consumer(g);
+        this.geocodeInformationChange.emit(g);
+        this.cityChange.emit(g.getCity());
+
       });
 
     });
@@ -109,4 +105,9 @@ function toLocation(l: google.maps.LatLng): Location {
     lat: l.lat(),
     lng: l.lng()
   }
+}
+
+export interface Selected {
+
+
 }

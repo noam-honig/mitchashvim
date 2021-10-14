@@ -1,7 +1,7 @@
 import { DataControl, openDialog } from "@remult/angular";
-import { Entity, Field, IdEntity, Remult } from "remult";
+import { Entity, Field, FieldType, IdEntity, Remult } from "remult";
 import { SelectSiteComponent } from "../select-site/select-site.component";
-import { AddressHelper } from "../shared/googleApiHelpers";
+import { GeocodeInformation } from "../shared/googleApiHelpers";
 import { Roles } from "../users/roles";
 import { SiteType } from "./site-type";
 
@@ -12,9 +12,15 @@ import { SiteType } from "./site-type";
         openDialog(SelectSiteComponent, x => x.args = {
             onSelect: site => f.value = site,
             title: f.metadata.caption,
-            siteType:SiteType.donor
+            siteType: SiteType.donor
 
         })
+    }
+})
+@FieldType<Site>({
+    validate:(_,self)=>{
+        if (self.valueIsNull())
+            self.error = "חובה לבחור אתר"
     }
 })
 @Entity("sites", {
@@ -23,13 +29,12 @@ import { SiteType } from "./site-type";
 export class Site extends IdEntity {
     @Field()
     type: SiteType = SiteType.donor;
-    @Field({ caption: 'שם' }) 
+    @Field({ caption: 'שם' })
     name: string = '';
     @Field({ caption: 'כתובת' })
     address: string = '';
     @Field()
-    addressApiResult: string = '';
-    addressHelper = new AddressHelper(this.remult, () => this.$.address, () => this.$.addressApiResult);
+    addressApiResult: GeocodeInformation = new GeocodeInformation();
     @Field({ caption: 'טלפון' })
     phone: string = '';
     @Field({ caption: 'איש קשר' })

@@ -17,5 +17,11 @@ export const terms = {
     cancel: 'בטל',
     home: 'בית',
     userAccounts: 'ניהול משתמשים',
-    signOut:'יציאה'
+    signOut: 'יציאה'
+}
+
+declare module 'remult' {
+    export interface Remult {
+        adminBypass: boolean
+    }
 }

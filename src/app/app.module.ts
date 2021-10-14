@@ -30,6 +30,8 @@ import { EditSiteComponent } from './edit-site/edit-site.component';
 import { AddressInputComponent } from './address-input/address-input.component';
 import { DeliveriesComponent } from './deliveries/deliveries.component';
 import { SelectSiteComponent } from './select-site/select-site.component';
+import { EditDeliveryComponent } from './edit-delivery/edit-delivery.component';
+import { DeliveryManagerComponent } from './delivery-manager/delivery-manager.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +44,9 @@ import { SelectSiteComponent } from './select-site/select-site.component';
     EditSiteComponent,
     AddressInputComponent,
     DeliveriesComponent,
-    SelectSiteComponent
+    SelectSiteComponent,
+    EditDeliveryComponent,
+    DeliveryManagerComponent
   ],
   imports: [
     BrowserModule,

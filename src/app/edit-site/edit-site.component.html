@@ -1,11 +1,13 @@
 <mat-dialog-content>
     <data-control [field]="args.site.$.name"></data-control>
-    <app-address-input [field]="args.site.$.address" #addressInput></app-address-input>
+    <app-address-input [field]="args.site.$.address" [(geocodeInformation)]="args.site.addressApiResult">
+    </app-address-input>
     <data-area [settings]="area"></data-area>
 </mat-dialog-content>
+
 <mat-dialog-actions>
 
-   
+
     <button type="button" mat-raised-button color="warning" (click)="cancel()">
         {{terms.cancel}}
     </button>

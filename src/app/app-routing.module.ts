@@ -12,12 +12,14 @@ import { AuthService } from './auth.service';
 import { terms } from './terms';
 import { SitesComponent } from './sites/sites.component';
 import { DeliveriesComponent } from './deliveries/deliveries.component';
+import { DeliveryManagerComponent } from './delivery-manager/delivery-manager.component';
 
 const defaultRoute = terms.home;
 const routes: Routes = [
   { path: defaultRoute, component: HomeComponent },
   { path: 'אתרים', component: SitesComponent, canActivate: [SiteGuard] },
   { path: 'משלוחים', component: DeliveriesComponent, canActivate: [AdminGuard] },
+  { path: 'שינוע חברתי', component: DeliveryManagerComponent, canActivate: [AdminGuard] },
   { path: terms.userAccounts, component: UsersComponent, canActivate: [AdminGuard] },
   { path: '**', redirectTo: '/' + defaultRoute, pathMatch: 'full' }
 
