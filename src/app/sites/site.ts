@@ -2,6 +2,7 @@ import { DataControl, openDialog } from "@remult/angular";
 import { Entity, Field, FieldType, IdEntity, Remult } from "remult";
 import { SelectSiteComponent } from "../select-site/select-site.component";
 import { GeocodeInformation } from "../shared/googleApiHelpers";
+import { requiredInHebrew } from "../terms";
 import { Roles } from "../users/roles";
 import { SiteType } from "./site-type";
 
@@ -18,26 +19,27 @@ import { SiteType } from "./site-type";
     }
 })
 @FieldType<Site>({
-    validate:(_,self)=>{
+    validate: (_, self) => {
         if (self.valueIsNull())
             self.error = "חובה לבחור אתר"
     }
 })
-@Entity("sites", {
-    allowApiCrud: Roles.sites
+@Entity<Site>("sites", {
+    allowApiCrud: Roles.sites,
+    defaultOrderBy: self => self.name
 })
 export class Site extends IdEntity {
     @Field()
     type: SiteType = SiteType.donor;
-    @Field({ caption: 'שם' })
+    @Field({ caption: 'שם', validate: requiredInHebrew })
     name: string = '';
-    @Field({ caption: 'כתובת' })
+    @Field({ caption: 'כתובת', validate: requiredInHebrew })
     address: string = '';
-    @Field()
+    @Field({})
     addressApiResult: GeocodeInformation = new GeocodeInformation();
-    @Field({ caption: 'טלפון' })
+    @Field({ caption: 'טלפון', validate: requiredInHebrew })
     phone: string = '';
-    @Field({ caption: 'איש קשר' })
+    @Field({ caption: 'איש קשר', validate: requiredInHebrew })
     contactPerson: string = '';
     @Field({ caption: 'הערת זמינות' })
     commentForCourier: string = '';

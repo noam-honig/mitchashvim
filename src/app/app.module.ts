@@ -32,6 +32,7 @@ import { DeliveriesComponent } from './deliveries/deliveries.component';
 import { SelectSiteComponent } from './select-site/select-site.component';
 import { EditDeliveryComponent } from './edit-delivery/edit-delivery.component';
 import { DeliveryManagerComponent } from './delivery-manager/delivery-manager.component';
+import { PrintComponent } from './print/print.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { DeliveryManagerComponent } from './delivery-manager/delivery-manager.co
     DeliveriesComponent,
     SelectSiteComponent,
     EditDeliveryComponent,
-    DeliveryManagerComponent
+    DeliveryManagerComponent,
+    PrintComponent
   ],
   imports: [
     BrowserModule,

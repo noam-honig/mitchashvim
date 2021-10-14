@@ -13,6 +13,7 @@ import { terms } from './terms';
 import { SitesComponent } from './sites/sites.component';
 import { DeliveriesComponent } from './deliveries/deliveries.component';
 import { DeliveryManagerComponent } from './delivery-manager/delivery-manager.component';
+import { PrintComponent } from './print/print.component';
 
 const defaultRoute = terms.home;
 const routes: Routes = [
@@ -20,6 +21,7 @@ const routes: Routes = [
   { path: 'אתרים', component: SitesComponent, canActivate: [SiteGuard] },
   { path: 'משלוחים', component: DeliveriesComponent, canActivate: [AdminGuard] },
   { path: 'שינוע חברתי', component: DeliveryManagerComponent, canActivate: [AdminGuard] },
+  { path: 'הדפסה לנהג', component: PrintComponent, canActivate: [AdminGuard], data: { print: true } },
   { path: terms.userAccounts, component: UsersComponent, canActivate: [AdminGuard] },
   { path: '**', redirectTo: '/' + defaultRoute, pathMatch: 'full' }
 

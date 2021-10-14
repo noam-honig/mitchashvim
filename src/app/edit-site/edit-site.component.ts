@@ -24,7 +24,7 @@ export class EditSiteComponent implements OnInit {
     let s = this.args.site.$;
     this.area = new DataAreaSettings({
       fields: () => [
-        [s.phone, s.contactPerson],
+        [ s.contactPerson,s.phone],
         s.commentForCourier,
         s.type
       ]

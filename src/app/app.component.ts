@@ -24,7 +24,7 @@ export class AppComponent implements OnInit {
     public dialogService: DialogService,
     public remult: Remult,
     public auth: AuthService) {
-
+    remult.yesNoQuestion = dialogService.yesNoQuestion;
 
   }
   terms = terms;
@@ -126,6 +126,9 @@ export class AppComponent implements OnInit {
           return this.activeRoute.firstChild.routeConfig.path;
       }
     return 'mitchashvim';
+  }
+  isPrint() {
+    return this.activeRoute?.snapshot?.firstChild?.data?.print;
   }
 
   shouldDisplayRoute(route: Route) {

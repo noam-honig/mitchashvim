@@ -5,7 +5,10 @@ import { FieldRef, FieldType, Remult } from "remult";
     valueConverter: {
         fromJson: (x: GeocodeResult) => {
             if (typeof x === "string")
-                x = JSON.parse(x);
+                if (x== "")
+                    return new GeocodeInformation();
+                else
+                    x = JSON.parse(x);
             return new GeocodeInformation(x);
         },
         toJson: x => x.info

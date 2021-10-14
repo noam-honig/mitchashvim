@@ -1,20 +1,23 @@
 import { DataControl, DataControlSettings, openDialog } from "@remult/angular";
-import { DateOnlyField, Entity, Field, FieldMetadata, FieldsMetadata, IdEntity, IntegerField, Remult, Validators } from "remult";
+import { DateOnlyField, Entity, Field, FieldMetadata, FieldsMetadata, Filter, IdEntity, IntegerField, Remult, Validators } from "remult";
 import { SelectSiteComponent } from "../select-site/select-site.component";
 import { GeocodeInformation } from "../shared/googleApiHelpers";
 import { Site } from "../sites/site";
+import { requiredInHebrew } from "../terms";
 import { Roles } from "../users/roles";
 import { DeliveryStatus } from "./delivery-status";
 import { DeliveryType } from "./delivery-type";
 
+
 @Entity<Delivery>("deliveries", {
     allowApiCrud: Roles.admin,
+    defaultOrderBy:self=>self.number,
     saving: async self => {
         if (!self.other && !self.computers && !self.surfaces && !self.screens && !self.laptops) {
             throw "חובה להזין כמות כל שהיא";
         }
         if (self.number == 0) {
-            self.number = (await self._.repository.findFirst({ orderBy: d => d.number }))?.number + 1 || 1;
+            self.number = (await self._.repository.findFirst({ orderBy: d => d.number.descending() }))?.number + 1 || 1;
         }
     }
 })
@@ -97,15 +100,15 @@ export class Delivery extends IdEntity {
     pickupTime: string = '';
     @Field({ caption: 'איסוף תואם' })
     pickupTimeConfirmed: boolean = false;
-    @Field({ caption: 'כתובת איסוף', validate: Validators.required.withMessage("חסר") })
+    @Field({ caption: 'כתובת איסוף', validate: requiredInHebrew })
     pickupAddress: string = '';
     @Field()
     pickupAddressApiResult: GeocodeInformation = new GeocodeInformation();
-    @Field({ caption: 'עיר איסוף', validate: Validators.required.withMessage("חסר") })
+    @Field({ caption: 'עיר איסוף', validate: requiredInHebrew })
     pickupCity: string = '';
-    @Field({ caption: 'איש קשר לאיסוף', validate: Validators.required.withMessage("חסר") })
+    @Field({ caption: 'איש קשר לאיסוף', validate: requiredInHebrew })
     pickupContactPerson: string = '';
-    @Field({ caption: 'טלפון לאיסוף', validate: Validators.required.withMessage("חסר") })
+    @Field({ caption: 'טלפון לאיסוף', validate: requiredInHebrew })
     pickupPhone: string = '';
     @Field({ caption: 'הערות איסוף' })
     pickupTimeComment: string = '';
@@ -117,15 +120,15 @@ export class Delivery extends IdEntity {
     deliveryTime: string = '';
     @Field({ caption: 'מסירה תואמה' })
     deliveryTimeConfirmed: boolean = false;
-    @Field({ caption: 'כתובת למסירה', validate: Validators.required.withMessage("חסר") })
+    @Field({ caption: 'כתובת למסירה', validate: requiredInHebrew })
     deliveryAddress: string = '';
     @Field()
     deliveryAddressApiResult: GeocodeInformation = new GeocodeInformation();
-    @Field({ caption: 'עיר למסירה', validate: Validators.required.withMessage("חסר") })
+    @Field({ caption: 'עיר למסירה', validate: requiredInHebrew })
     deliveryCity: string = '';
-    @Field({ caption: 'איש קשר למסירה', validate: Validators.required.withMessage("חסר") })
+    @Field({ caption: 'איש קשר למסירה', validate: requiredInHebrew })
     deliveryContactPerson: string = '';
-    @Field({ caption: 'טלפון למסירה', validate: Validators.required.withMessage("חסר") })
+    @Field({ caption: 'טלפון למסירה', validate: requiredInHebrew })
     deliveryPhone: string = '';
     @Field({ caption: 'הערות מסירה' })
     deliveryTimeComment: string = '';
@@ -138,25 +141,30 @@ export class Delivery extends IdEntity {
     @Field({ caption: 'ארכיב' })
     archive: boolean = false;
 
-    static colsInGrid=14;
+    static colsInGrid = 14;
     static deliveryColumns(d: FieldsMetadata<Delivery>) {
         let r = [] as DataControlSettings<Delivery>[];
         function add(...fields: FieldMetadata[]) {
-          r.push(...fields.map(x => ({ field: x })));
+            r.push(...fields.map(x => ({ field: x })));
         }
         add(d.number, d.type, d.status, d.source);
         r.push({
-          field: d.pickupCity,
-          getValue: (d) => d.pickupCity + " => " + d.deliveryCity,
-          caption: 'ערים'
+            field: d.pickupCity,
+            getValue: (d) => d.pickupCity + " => " + d.deliveryCity,
+            caption: 'ערים'
         });
         add(d.target, d.notes, d.surfaces, d.laptops, d.screens, d.computers, d.other, d.pickupDate!, d.deliveryDate!);
         r.push(...[...d].filter(x => x != d.id).map(f => ({ field: f })));
         return r;
-      }
-      
+    }
+
+    static activeDeliveryFilter = Filter.createCustom<Delivery>(d =>
+        d.status.isIn([
+            DeliveryStatus.toSchedule,
+            DeliveryStatus.scheduled,
+            DeliveryStatus.readyForDelivery
+        ]));
 
 }
 
 
-  

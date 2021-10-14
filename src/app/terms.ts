@@ -1,3 +1,5 @@
+import { Validators } from "remult";
+
 export const terms = {
     username: "שם משתמש",
     signIn: "כניסה",
@@ -22,6 +24,9 @@ export const terms = {
 
 declare module 'remult' {
     export interface Remult {
-        adminBypass: boolean
+        adminBypass: boolean,
+        yesNoQuestion(question: string): Promise<boolean>;
     }
 }
+
+export const requiredInHebrew = Validators.required.withMessage("חסר");

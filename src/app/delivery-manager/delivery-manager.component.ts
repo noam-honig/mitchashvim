@@ -27,11 +27,7 @@ export class DeliveryManagerComponent implements OnInit {
     columnSettings: d => {
       return Delivery.deliveryColumns(d);
     },
-    where: d => d.status.isIn([
-      DeliveryStatus.toSchedule,
-      DeliveryStatus.scheduled,
-      DeliveryStatus.readyForDelivery
-    ]).or(d.status.isEqualTo(DeliveryStatus.canceled)),//.and(d.wasChangedByMitchashvim.isEqualTo(true))),
+    where: d => Delivery.activeDeliveryFilter().or(d.status.isEqualTo(DeliveryStatus.canceled)),//.and(d.wasChangedByMitchashvim.isEqualTo(true))),
     rowButtons: [{
       icon: 'edit',
       textInMenu: () => 'עדכן משלוח',
