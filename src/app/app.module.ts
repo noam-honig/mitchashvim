@@ -16,6 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSelectModule } from '@angular/material/select';
 import { RemultModule } from '@remult/angular';
 import { UsersComponent } from './users/users.component';
 import { HomeComponent } from './home/home.component';
@@ -24,6 +25,11 @@ import { InputAreaComponent } from './common/input-area/input-area.component';
 import { DialogService } from './common/dialog';
 import { AdminGuard } from './users/roles';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SitesComponent } from './sites/sites.component';
+import { EditSiteComponent } from './edit-site/edit-site.component';
+import { AddressInputComponent } from './address-input/address-input.component';
+import { DeliveriesComponent } from './deliveries/deliveries.component';
+import { SelectSiteComponent } from './select-site/select-site.component';
 
 @NgModule({
   declarations: [
@@ -31,11 +37,17 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     UsersComponent,
     HomeComponent,
     YesNoQuestionComponent,
-    InputAreaComponent
+    InputAreaComponent,
+    SitesComponent,
+    EditSiteComponent,
+    AddressInputComponent,
+    DeliveriesComponent,
+    SelectSiteComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    MatSelectModule,
     FormsModule,
     MatSidenavModule,
     MatListModule,

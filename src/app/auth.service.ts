@@ -32,14 +32,15 @@ export class AuthService {
                     name: u.name
                 };
                 if (u.admin) {
-                    result.roles.push(Roles.admin);
+                    result.roles.push(Roles.admin,Roles.sites);
+                    
                 }
             }
 
         if (result!) {
             return (jwt.sign(result, getJwtTokenSignKey()));
         }
-        throw new Error("משתמש או סיסמה לא מוכרים");
+        throw new Error("משתמש או סיסמה לא");
     }
     setAuthToken(token: string) {
         this.remult.setUser(new JwtHelperService().decodeToken(token));

@@ -5,17 +5,21 @@ import { HomeComponent } from './home/home.component';
 
 
 import { UsersComponent } from './users/users.component';
-import { AdminGuard } from './users/roles';
+import { AdminGuard, SiteGuard } from './users/roles';
 import { ShowDialogOnErrorErrorHandler } from './common/dialog';
 import { JwtModule } from '@auth0/angular-jwt';
 import { AuthService } from './auth.service';
 import { terms } from './terms';
+import { SitesComponent } from './sites/sites.component';
+import { DeliveriesComponent } from './deliveries/deliveries.component';
 
 const defaultRoute = terms.home;
 const routes: Routes = [
   { path: defaultRoute, component: HomeComponent },
+  { path: 'אתרים', component: SitesComponent, canActivate: [SiteGuard] },
+  { path: 'משלוחים', component: DeliveriesComponent, canActivate: [AdminGuard] },
   { path: terms.userAccounts, component: UsersComponent, canActivate: [AdminGuard] },
-  { path: '**', redirectTo: '/'+defaultRoute, pathMatch: 'full' }
+  { path: '**', redirectTo: '/' + defaultRoute, pathMatch: 'full' }
 
 ];
 

@@ -16,5 +16,6 @@ export const terms = {
     areYouSureYouWouldLikeToDelete: "האם למחוק",
     cancel: 'בטל',
     home: 'בית',
-    userAccounts: 'ניהול משתמשים'
+    userAccounts: 'ניהול משתמשים',
+    signOut:'יציאה'
 }
