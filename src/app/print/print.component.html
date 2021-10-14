@@ -1,7 +1,25 @@
-<table>
+<table class="table-bordered">
     <thead>
+        <th>#</th>
         <th>עיר</th>
+        <th>תאריך</th>
+        <th>משטחים</th>
         <th>איסוף</th>
+        <th>איש קשר</th>
         <th>מסירה</th>
+        <th>איש קשר</th>
     </thead>
+    <tbody>
+        <tr *ngFor="let d of deliveries">
+            <td>{{d.number}}</td>
+            <td>{{d.pickupCity}} => {{d.deliveryCity}}</td>
+            <td>{{d.pickupDate|date}}</td>
+            <td>{{contentText(d)}}</td>
+            <td><strong> {{d.source.name}} </strong><br /> {{d.pickupAddress}} </td>
+            <td>{{d.pickupContactPerson}}<br />{{d.pickupPhone}} </td>
+            <td>{{d.target.name}}<br /> {{d.deliveryAddress}} </td>
+            <td>{{d.deliveryContactPerson}}<br />{{d.deliveryPhone}} </td>
+
+        </tr>
+    </tbody>
 </table>
