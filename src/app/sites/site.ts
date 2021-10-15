@@ -22,7 +22,9 @@ import { SiteType } from "./site-type";
     validate: (_, self) => {
         if (self.valueIsNull())
             self.error = "חובה לבחור אתר"
-    }
+    },
+    displayValue: (_,self) => self?.name
+
 })
 @Entity<Site>("sites", {
     allowApiCrud: Roles.sites,

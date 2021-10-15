@@ -1,8 +1,10 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { Field, getFields, Remult } from 'remult';
 import { AddressInputComponent } from '../address-input/address-input.component';
+import { Delivery } from '../deliveries/delivery';
 import { GeocodeInformation } from '../shared/googleApiHelpers';
 import { Site } from '../sites/site';
+import { ChangeLog } from '../track-changes/change-log';
 
 @Component({
   selector: 'app-home',
@@ -20,7 +22,13 @@ export class HomeComponent implements OnInit {
   result: any = {};
   site = this.remult.repo(Site).create();
 
+
+  changes!: ChangeLog;
+  meta = this.remult.repo(Delivery).metadata;
+
   ngOnInit() {
+    
+    this.remult.repo(ChangeLog).findFirst().then(c => this.changes = c);
 
   }
 

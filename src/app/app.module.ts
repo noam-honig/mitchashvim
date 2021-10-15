@@ -33,6 +33,7 @@ import { SelectSiteComponent } from './select-site/select-site.component';
 import { EditDeliveryComponent } from './edit-delivery/edit-delivery.component';
 import { DeliveryManagerComponent } from './delivery-manager/delivery-manager.component';
 import { PrintComponent } from './print/print.component';
+import { TrackChangesComponent } from './track-changes/track-changes.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { PrintComponent } from './print/print.component';
     SelectSiteComponent,
     EditDeliveryComponent,
     DeliveryManagerComponent,
-    PrintComponent
+    PrintComponent,
+    TrackChangesComponent
   ],
   imports: [
     BrowserModule,

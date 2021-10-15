@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { DataAreaFieldsSetting, DataAreaSettings } from '@remult/angular';
+import { DataAreaFieldsSetting, DataAreaSettings, openDialog } from '@remult/angular';
 import { Delivery } from '../deliveries/delivery';
 import { terms } from '../terms';
 import { assign } from 'remult/assign';
+import { TrackChangesComponent } from '../track-changes/track-changes.component';
 
 @Component({
   selector: 'app-edit-delivery',
@@ -62,7 +63,7 @@ export class EditDeliveryComponent implements OnInit {
           , { ...scheduleSettings, field: d.$.pickupTime }
           ,
         !this.args.strategy.allowEditSchedule ? {
-          visible:()=>!d.isNew(),
+          visible: () => !d.isNew(),
           caption: d.$.pickupTimeConfirmed.metadata.caption,
           getValue: () => d.pickupTimeConfirmed ? 'כן' :
             'לא'
@@ -86,7 +87,7 @@ export class EditDeliveryComponent implements OnInit {
           { ...scheduleSettings, field: d.$.deliveryDate! },
           { ...scheduleSettings, field: d.$.deliveryTime },
           !this.args.strategy.allowEditSchedule ? {
-            visible:()=>!d.isNew(),
+            visible: () => !d.isNew(),
             caption: d.$.deliveryTimeConfirmed.metadata.caption,
             getValue: () => d.deliveryTimeConfirmed ? 'כן' :
               'לא'
@@ -112,7 +113,7 @@ export class EditDeliveryComponent implements OnInit {
   }
   async confirm() {
     let d = this.args.delivery;
-    
+
     await this.args.delivery.save();
     if (this.args.ok)
       this.args.ok();
@@ -121,6 +122,11 @@ export class EditDeliveryComponent implements OnInit {
   async cancel() {
     this.args.delivery._.undoChanges();
     this.ref.close();
+  }
+  showChanges() {
+    openDialog(TrackChangesComponent, x => x.args = {
+      for: this.args.delivery
+    })
   }
 
 }

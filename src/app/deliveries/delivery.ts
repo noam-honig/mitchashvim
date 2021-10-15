@@ -1,9 +1,10 @@
 import { DataControl, DataControlSettings, openDialog } from "@remult/angular";
-import { DateOnlyField, Entity, Field, FieldMetadata, FieldsMetadata, Filter, IdEntity, IntegerField, Remult, Validators } from "remult";
+import { DateOnlyField, Entity, Field, FieldMetadata, FieldRef, FieldsMetadata, Filter, IdEntity, IntegerField, isBackend, Remult, Validators } from "remult";
 import { SelectSiteComponent } from "../select-site/select-site.component";
 import { GeocodeInformation } from "../shared/googleApiHelpers";
 import { Site } from "../sites/site";
 import { requiredInHebrew } from "../terms";
+import { change, ChangeLog } from "../track-changes/change-log";
 import { Roles } from "../users/roles";
 import { DeliveryStatus } from "./delivery-status";
 import { DeliveryType } from "./delivery-type";
@@ -11,16 +12,52 @@ import { DeliveryType } from "./delivery-type";
 
 @Entity<Delivery>("deliveries", {
     allowApiCrud: Roles.admin,
-    defaultOrderBy:self=>self.number,
-    saving: async self => {
-        if (!self.other && !self.computers && !self.surfaces && !self.screens && !self.laptops) {
-            throw "חובה להזין כמות כל שהיא";
+    defaultOrderBy: self => self.number
+},
+    (options, remult) => options.
+        saving = async self => {
+            if (!self.other && !self.computers && !self.surfaces && !self.screens && !self.laptops) {
+                throw "חובה להזין כמות כל שהיא";
+            }
+            if (self.number == 0) {
+                self.number = (await self._.repository.findFirst({ orderBy: d => d.number.descending() }))?.number + 1 || 1;
+            }
+            if (!self.isNew() && isBackend()) {
+                let changes = [] as change[];
+
+                let exclude = [self.$.pickupAddressApiResult, self.$.deliveryAddressApiResult];
+                for (const c of [...self.$].filter(c => !exclude.includes(c)).filter(c => c.valueChanged())) {
+                    try {
+                        changes.push({
+                            key: c.metadata.key,
+                            oldDisplayValue: c.metadata.options.displayValue ? c.metadata.options.displayValue(self, c.originalValue) : c.originalValue,
+                            newDisplayValue: c.displayValue,
+                            newValue: (c.value instanceof IdEntity) ? c.value.id : c.value,
+                            oldValue: (c.originalValue instanceof IdEntity) ? c.originalValue.id : c.originalValue
+                        })
+                    } catch (err) {
+                        console.log(c);
+                        throw err;
+
+                    }
+                }
+
+                if (changes.length > 0) {
+                    let c = await remult.repo(ChangeLog).findFirst({ where: c => c.relatedId.isEqualTo(self.id), createIfNotFound: true });
+                    c.changes = [{
+                        date: new Date(),
+                        userId: remult.user.id,
+                        userName: remult.user.name,
+                        changes
+                    }, ...c.changes];
+                    console.log(c.changes[0].changes);
+
+
+                    await c.save();
+                }
+            }
         }
-        if (self.number == 0) {
-            self.number = (await self._.repository.findFirst({ orderBy: d => d.number.descending() }))?.number + 1 || 1;
-        }
-    }
-})
+)
 export class Delivery extends IdEntity {
     @DataControl({ width: '70' })
     @IntegerField({ allowApiUpdate: false, caption: 'מספר' })

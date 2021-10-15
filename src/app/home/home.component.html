@@ -1,3 +1,15 @@
+<ul *ngIf="changes">
+  <li *ngFor="let e of changes.changes">
+    {{e.userName}}, {{e.date|date}}
+      <div *ngFor="let c of e.changes">
+        <strong>{{meta.fields.find(c.key).caption}}</strong>:
+        <del class="old-val">{{c.oldDisplayValue}}</del>
+        <ins>{{c.newDisplayValue}}</ins>
+
+      </div>
+
+  </li>
+</ul>
 <app-address-input [field]="site.$.address" #addressInput [(geocodeInformation)]="site.addressApiResult">
 </app-address-input>
 <pre>
