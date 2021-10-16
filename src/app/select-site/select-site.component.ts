@@ -23,9 +23,10 @@ export class SelectSiteComponent implements OnInit {
     this.sites = await this.remult.repo(Site).find({
       where: p =>
         // if there is a search value, search by it
-        p.type.isEqualTo(this.filterSite).and(
-          this.searchString ? p.name.contains(this.searchString)
-            : undefined!)
+        p.type.isEqualTo(this.filterSite)
+          .and(p.deleted.isEqualTo(false)).and(
+            this.searchString ? p.name.contains(this.searchString)
+              : undefined!)
     });
   }
   async doSearch() {

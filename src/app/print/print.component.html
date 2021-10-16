@@ -13,7 +13,7 @@
         <tr *ngFor="let d of deliveries">
             <td>{{d.number}}</td>
             <td>{{d.pickupCity}} => {{d.deliveryCity}}</td>
-            <td>{{d.pickupDate|date}}</td>
+            <td>{{d.$.pickupDate?.displayValue}}</td>
             <td>{{contentText(d)}}</td>
             <td><strong> {{d.source.name}} </strong><br /> {{d.pickupAddress}} </td>
             <td>{{d.pickupContactPerson}}<br />{{d.pickupPhone}} </td>

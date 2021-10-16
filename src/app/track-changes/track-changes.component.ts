@@ -15,6 +15,11 @@ export class TrackChangesComponent implements OnInit {
   args!: {
     for: IdEntity
   }
+  showDate(d: Date) {
+    if (typeof (d) === "string")
+      d = new Date(d);
+    return d?.toLocaleDateString('he-il');
+  }
 
   changes!: ChangeLog;
   meta!: EntityMetadata;

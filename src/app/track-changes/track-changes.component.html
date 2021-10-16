@@ -1,7 +1,7 @@
 <mat-dialog-content>
     <ul *ngIf="changes">
         <li *ngFor="let e of changes.changes">
-            {{e.userName}}, {{e.date|date}}
+            {{e.userName}}, {{showDate(e.date) }}
             <div *ngFor="let c of e.changes">
                 <strong>{{meta.fields.find(c.key).caption}}</strong>:
                 <del class="old-val">{{c.oldDisplayValue}}</del>

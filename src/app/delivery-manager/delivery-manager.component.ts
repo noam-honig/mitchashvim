@@ -6,6 +6,8 @@ import { Delivery } from '../deliveries/delivery';
 import { DeliveryStatus } from '../deliveries/delivery-status';
 import { EditDeliveryComponent, editStrategy } from '../edit-delivery/edit-delivery.component';
 import { columnOrderAndWidthSaver } from '../shared/columnOrderSaver';
+import { deliveriesClick } from '../shared/multi-row-button';
+import { TrackChangesComponent } from '../track-changes/track-changes.component';
 
 @Component({
   selector: 'app-delivery-manager',
@@ -17,17 +19,19 @@ export class DeliveryManagerComponent implements OnInit {
 
   constructor(private remult: Remult) { }
 
-  deliveries = new GridSettings(this.remult.repo(Delivery), {
+  deliveries: GridSettings<Delivery> = new GridSettings(this.remult.repo(Delivery), {
     //allowCrud: true,
     allowInsert: false,
     allowDelete: false,
     knowTotalRows: true,
+    allowSelection: true,
     numOfColumnsInGrid: Delivery.colsInGrid,
 
     columnSettings: d => {
       return Delivery.deliveryColumns(d);
     },
-    where: d => Delivery.activeDeliveryFilter().or(d.status.isEqualTo(DeliveryStatus.canceled)),//.and(d.wasChangedByMitchashvim.isEqualTo(true))),
+    rowCssClass: d => d.rowCss(),
+    where: d => Delivery.activeDeliveryFilter().or(d.changeSeenByDeliveryManager.isEqualTo(false)),
     rowButtons: [{
       icon: 'edit',
       textInMenu: () => 'עדכן משלוח',
@@ -63,6 +67,23 @@ export class DeliveryManagerComponent implements OnInit {
           }
         })
       }
+    },
+    {
+      name: 'הצג שינויים',
+      click: d => openDialog(TrackChangesComponent, x => x.args = { for: d })
+    },
+    {
+      name: 'סמן שראיתי את השינוי',
+      click: d => {
+        deliveriesClick(this.deliveries, this.remult, d, async d => {
+          d.changeSeenByDeliveryManager = !d.changeSeenByDeliveryManager;
+          d.save();
+        })
+      }
+    },
+    {
+      name: 'סמן הודפס לנהג',
+      click: d => deliveriesClick(this.deliveries, this.remult, d, async d => d.assign({ printedToDriver: !d.printedToDriver }).save())
     }
     ]
   });

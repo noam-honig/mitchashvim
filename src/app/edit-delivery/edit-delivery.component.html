@@ -24,7 +24,7 @@
     <button mat-raised-button color="accent" (click)="confirm()">
         {{terms.ok}}
     </button>
-    <button mat-raised-button (click)="showChanges()">
+    <button mat-raised-button (click)="showChanges()" *ngIf="!args.delivery.isNew()">
         הצג שינויים
     </button>
 

@@ -1,6 +1,7 @@
 import { DataControl, openDialog } from "@remult/angular";
 import { Entity, Field, FieldType, IdEntity, Remult } from "remult";
 import { SelectSiteComponent } from "../select-site/select-site.component";
+import { PhoneControl } from "../shared/field-types";
 import { GeocodeInformation } from "../shared/googleApiHelpers";
 import { requiredInHebrew } from "../terms";
 import { Roles } from "../users/roles";
@@ -23,7 +24,7 @@ import { SiteType } from "./site-type";
         if (self.valueIsNull())
             self.error = "חובה לבחור אתר"
     },
-    displayValue: (_,self) => self?.name
+    displayValue: (_, self) => self?.name
 
 })
 @Entity<Site>("sites", {
@@ -39,13 +40,14 @@ export class Site extends IdEntity {
     address: string = '';
     @Field({})
     addressApiResult: GeocodeInformation = new GeocodeInformation();
+    @PhoneControl()
     @Field({ caption: 'טלפון', validate: requiredInHebrew })
     phone: string = '';
     @Field({ caption: 'איש קשר', validate: requiredInHebrew })
     contactPerson: string = '';
     @Field({ caption: 'הערת זמינות' })
     commentForCourier: string = '';
-    constructor(private remult: Remult) {
-        super();
-    }
+    @Field()
+    deleted: boolean = false;
+
 }

@@ -12,15 +12,21 @@ import { Site } from './site';
 export class SitesComponent implements OnInit {
 
   constructor(private remult: Remult) { }
+  showDeleted = false;
 
   sites = new GridSettings(this.remult.repo(Site), {
-    allowCrud: true,
-    allowDelete: false,
-    allowInsert: false,
+    rowCssClass: s => s.deleted ? 'deleted' : '',
+    where: s => this.showDeleted ? undefined! : s.deleted.isEqualTo(false),
+    columnSettings: s => [...s].filter(c => c != s.id && c != s.addressApiResult),
+
     rowButtons: [{
       icon: 'edit',
       textInMenu: () => 'עדכן',
       click: (site) => openDialog(EditSiteComponent, x => x.args = { site })
+    }, {
+      icon: 'delete',
+      name: 'מחק',
+      click: site => site.assign({ deleted: !site.deleted }).save()
     }],
     gridButtons: [{
       textInMenu: () => 'הוסף',

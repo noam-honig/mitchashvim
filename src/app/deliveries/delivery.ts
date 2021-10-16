@@ -1,6 +1,7 @@
 import { DataControl, DataControlSettings, openDialog } from "@remult/angular";
-import { DateOnlyField, Entity, Field, FieldMetadata, FieldRef, FieldsMetadata, Filter, IdEntity, IntegerField, isBackend, Remult, Validators } from "remult";
+import { Entity, Field, FieldMetadata, FieldRef, FieldsMetadata, Filter, IdEntity, IntegerField, isBackend, Remult, Validators } from "remult";
 import { SelectSiteComponent } from "../select-site/select-site.component";
+import { DateOnlyField, PhoneControl } from "../shared/field-types";
 import { GeocodeInformation } from "../shared/googleApiHelpers";
 import { Site } from "../sites/site";
 import { requiredInHebrew } from "../terms";
@@ -42,6 +43,7 @@ import { DeliveryType } from "./delivery-type";
                     }
                 }
 
+
                 if (changes.length > 0) {
                     let c = await remult.repo(ChangeLog).findFirst({ where: c => c.relatedId.isEqualTo(self.id), createIfNotFound: true });
                     c.changes = [{
@@ -50,14 +52,15 @@ import { DeliveryType } from "./delivery-type";
                         userName: remult.user.name,
                         changes
                     }, ...c.changes];
-                    console.log(c.changes[0].changes);
 
 
                     await c.save();
                 }
+
             }
         }
 )
+
 export class Delivery extends IdEntity {
     @DataControl({ width: '70' })
     @IntegerField({ allowApiUpdate: false, caption: 'מספר' })
@@ -145,6 +148,8 @@ export class Delivery extends IdEntity {
     pickupCity: string = '';
     @Field({ caption: 'איש קשר לאיסוף', validate: requiredInHebrew })
     pickupContactPerson: string = '';
+
+    @PhoneControl()
     @Field({ caption: 'טלפון לאיסוף', validate: requiredInHebrew })
     pickupPhone: string = '';
     @Field({ caption: 'הערות איסוף' })
@@ -165,6 +170,7 @@ export class Delivery extends IdEntity {
     deliveryCity: string = '';
     @Field({ caption: 'איש קשר למסירה', validate: requiredInHebrew })
     deliveryContactPerson: string = '';
+    @PhoneControl()
     @Field({ caption: 'טלפון למסירה', validate: requiredInHebrew })
     deliveryPhone: string = '';
     @Field({ caption: 'הערות מסירה' })
@@ -178,7 +184,18 @@ export class Delivery extends IdEntity {
     @Field({ caption: 'ארכיב' })
     archive: boolean = false;
 
-    static colsInGrid = 14;
+    @Field({ caption: 'שינוי נצפה ע"י שינוע חברתי' })
+    changeSeenByDeliveryManager: boolean = true;//ברירת מחדל TRUE כדי שלא יראו משלוחים חדשים לגמרי
+    @DataControl({ width: '90' })
+    @Field({ caption: 'הודפס לנהג' })
+    printedToDriver: boolean = false;
+
+    rowCss() {
+        return (!this.changeSeenByDeliveryManager ? 'unread' : '') + (this.archive ? ' archive' : '');
+    }
+
+
+    static colsInGrid = 15;
     static deliveryColumns(d: FieldsMetadata<Delivery>) {
         let r = [] as DataControlSettings<Delivery>[];
         function add(...fields: FieldMetadata[]) {
@@ -190,7 +207,7 @@ export class Delivery extends IdEntity {
             getValue: (d) => d.pickupCity + " => " + d.deliveryCity,
             caption: 'ערים'
         });
-        add(d.target, d.notes, d.surfaces, d.laptops, d.screens, d.computers, d.other, d.pickupDate!, d.deliveryDate!);
+        add(d.target, d.notes, d.surfaces, d.laptops, d.screens, d.computers, d.other, d.pickupDate!, d.deliveryDate!, d.printedToDriver);
         r.push(...[...d].filter(x => x != d.id).map(f => ({ field: f })));
         return r;
     }

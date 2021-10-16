@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
+import { DataControlInfo, DataControlSettings, GridSettings, openDialog, RowButton } from '@remult/angular';
 import { FieldMetadata, FieldsMetadata, Remult } from 'remult';
 import { InputAreaComponent } from '../common/input-area/input-area.component';
 import { YesNoQuestionComponent } from '../common/yes-no-question/yes-no-question.component';
 import { EditDeliveryComponent, editStrategy } from '../edit-delivery/edit-delivery.component';
 import { columnOrderAndWidthSaver } from '../shared/columnOrderSaver';
+import { deliveriesClick } from '../shared/multi-row-button';
 import { Delivery } from './delivery';
 import { DeliveryStatus } from './delivery-status';
 
@@ -16,14 +17,16 @@ import { DeliveryStatus } from './delivery-status';
 export class DeliveriesComponent implements OnInit {
 
   constructor(private remult: Remult) { }
-
-  deliveries = new GridSettings(this.remult.repo(Delivery), {
+  showArchive = false;
+  deliveries: GridSettings<Delivery> = new GridSettings<Delivery>(this.remult.repo(Delivery), {
     //allowCrud: true,
     allowInsert: false,
     allowDelete: false,
     knowTotalRows: true,
     allowSelection: true,
     numOfColumnsInGrid: Delivery.colsInGrid,
+    rowCssClass: d => d.rowCss(),
+    where: d => !this.showArchive ? d.archive.isEqualTo(false) : undefined!,
 
     columnSettings: d => {
       return Delivery.deliveryColumns(d);
@@ -40,7 +43,14 @@ export class DeliveriesComponent implements OnInit {
           this.deliveries.items.push(d);
         });
       }
-    }],
+    }, {
+      name: 'הצג ארכיב',
+      click: () => {
+        this.showArchive = !this.showArchive;
+        this.deliveries.reloadData()
+      }
+    }
+    ],
     rowButtons: [{
       icon: 'edit',
       textInMenu: () => 'עדכן משלוח',
@@ -49,22 +59,26 @@ export class DeliveriesComponent implements OnInit {
     },
     {
       name: 'סמן כמוכן למשלוח',
-      click: async d => {
-        if (this.deliveries.selectedRows.length > 0) {
-          if (await this.remult.yesNoQuestion("לעדכן " + this.deliveries.selectedRows.length + " משלוחים?")) {
-            for (const d of this.deliveries.selectedRows) {
-              d.status = DeliveryStatus.readyForDelivery;
-              await d.save();
-            }
-          }
-        } else {
+      click: d => deliveriesClick(this.deliveries, this.remult, d,
+        async d => {
           d.status = DeliveryStatus.readyForDelivery;
-          d.save();
-        }
-      }
+          if (d.$.status.originalValue == DeliveryStatus.setup)
+            d.changeSeenByDeliveryManager = true;
+          await d.save();
+        })
+    },
+    {
+      name: 'העבר לארכיב',
+      click: d => deliveriesClick(this.deliveries, this.remult, d,
+        async d => {
+          d.archive = !d.archive;
+          await d.save();
+        })
     }
     ]
   });
+
+
 
   private editDelivery(delivery: Delivery, ok?: () => void) {
     openDialog(EditDeliveryComponent, x => x.args = {

@@ -5,6 +5,7 @@ import { Delivery } from '../deliveries/delivery';
 import { terms } from '../terms';
 import { assign } from 'remult/assign';
 import { TrackChangesComponent } from '../track-changes/track-changes.component';
+import { DeliveryStatus } from '../deliveries/delivery-status';
 
 @Component({
   selector: 'app-edit-delivery',
@@ -113,8 +114,21 @@ export class EditDeliveryComponent implements OnInit {
   }
   async confirm() {
     let d = this.args.delivery;
+    if (d.wasChanged()) {
+      if (!this.args.strategy.changeDoneByDeliveryManager) {
+        let originalStatus = d.$.status.originalValue;
+        if (d.isNew())
+          originalStatus = DeliveryStatus.setup;
 
-    await this.args.delivery.save();
+        if (originalStatus == DeliveryStatus.setup && d.status == DeliveryStatus.readyForDelivery) {
+          d.changeSeenByDeliveryManager = true; //no need to highlight that a new shipment has arrived.
+        }
+        else if (originalStatus.highlightChangeToDeliveryManager)
+          d.changeSeenByDeliveryManager = false;
+
+      }
+      await d.save();
+    }
     if (this.args.ok)
       this.args.ok();
     this.ref.close();
@@ -133,14 +147,18 @@ export class EditDeliveryComponent implements OnInit {
 
 export class editStrategy {
   static mitchashvim: editStrategy = assign(new editStrategy(), {
-    allowEditDeliveryRequest: true
+    allowEditDeliveryRequest: true,
+
   });
   static deliveryManager: editStrategy = assign(new editStrategy(), {
-    allowEditSchedule: true
+    allowEditSchedule: true,
+    changeDoneByDeliveryManager: true
+
   })
 
   allowEditSchedule = false;
   allowEditDeliveryRequest = false;
+  changeDoneByDeliveryManager = false;
 
 
 }

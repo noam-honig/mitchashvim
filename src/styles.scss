@@ -33,3 +33,13 @@ ins {
 del {
     color: red;
 }
+
+.unread {
+    font-weight: 700;
+}
+.archive {
+    color: gray;
+}
+.deleted {
+    text-decoration: line-through;
+}
