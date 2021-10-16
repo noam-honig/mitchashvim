@@ -25,12 +25,26 @@ export class AddressInputComponent implements AfterViewInit {
   initAddressAutoComplete = false;
   //@ts-ignore
   destroyMe!: google.maps.MapsEventListener;
+  addressOnFocus = '';
+  apiResultOnFocus!: GeocodeInformation;
+  onFocus() {
+    this.addressOnFocus = this.field.value;;
+    this.apiResultOnFocus = this.geocodeInformation
+  }
+  onBlur() {
+    if (this.addressOnFocus != this.field.value && this.apiResultOnFocus == this.geocodeInformation) {
+      this.field.error = "יש לבחור כתובת מהרשימה";
+      this.geocodeInformationChange.emit(new GeocodeInformation());
+      this.cityChange.emit('');
+    }
 
+  }
   @ViewChild('addressInput', { static: false }) addressInput!: ElementRef;
   initAddress(consumer: (x: GeocodeInformation) => void) {
     if (this.initAddressAutoComplete)
       return;
     this.initAddressAutoComplete = true;
+
 
     //@ts-ignore
     const autocomplete = new google.maps.places.SearchBox(this.addressInput.nativeElement,
@@ -44,6 +58,7 @@ export class AddressInputComponent implements AfterViewInit {
 
       this.zone.run(() => {
         this.field.value = this.addressInput.nativeElement.value;
+        this.field.error = '';
         this.field.value = getAddress({
           formatted_address: this.field.value,
           address_components: place.address_components
