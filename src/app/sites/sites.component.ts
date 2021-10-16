@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GridSettings, openDialog } from '@remult/angular';
 import { Remult } from 'remult';
 import { EditSiteComponent } from '../edit-site/edit-site.component';
+import { TrackChangesComponent } from '../track-changes/track-changes.component';
 import { Site } from './site';
 
 @Component({
@@ -23,6 +24,11 @@ export class SitesComponent implements OnInit {
       icon: 'edit',
       textInMenu: () => 'עדכן',
       click: (site) => openDialog(EditSiteComponent, x => x.args = { site })
+    },
+    {
+      icon: 'fact_check',
+      name: 'הצג שינויים',
+      click: site => openDialog(TrackChangesComponent, x => x.args = { for: site })
     }, {
       icon: 'delete',
       name: 'מחק',

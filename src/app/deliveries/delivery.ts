@@ -1,11 +1,12 @@
 import { DataControl, DataControlSettings, openDialog } from "@remult/angular";
-import { Entity, Field, FieldMetadata, FieldRef, FieldsMetadata, Filter, IdEntity, IntegerField, isBackend, Remult, Validators } from "remult";
+
+import { Entity, Field, FieldMetadata, FieldRef, Fields, FieldsMetadata, Filter, IdEntity, IntegerField, isBackend, Remult, Validators } from "remult";
 import { SelectSiteComponent } from "../select-site/select-site.component";
 import { DateOnlyField, PhoneControl } from "../shared/field-types";
 import { GeocodeInformation } from "../shared/googleApiHelpers";
 import { Site } from "../sites/site";
 import { requiredInHebrew } from "../terms";
-import { change, ChangeLog } from "../track-changes/change-log";
+import { change, ChangeLog, recordChanges } from "../track-changes/change-log";
 import { Roles } from "../users/roles";
 import { DeliveryStatus } from "./delivery-status";
 import { DeliveryType } from "./delivery-type";
@@ -23,41 +24,7 @@ import { DeliveryType } from "./delivery-type";
             if (self.number == 0) {
                 self.number = (await self._.repository.findFirst({ orderBy: d => d.number.descending() }))?.number + 1 || 1;
             }
-            if (!self.isNew() && isBackend()) {
-                let changes = [] as change[];
-
-                let exclude = [self.$.pickupAddressApiResult, self.$.deliveryAddressApiResult];
-                for (const c of [...self.$].filter(c => !exclude.includes(c)).filter(c => c.valueChanged())) {
-                    try {
-                        changes.push({
-                            key: c.metadata.key,
-                            oldDisplayValue: c.metadata.options.displayValue ? c.metadata.options.displayValue(self, c.originalValue) : c.originalValue,
-                            newDisplayValue: c.displayValue,
-                            newValue: (c.value instanceof IdEntity) ? c.value.id : c.value,
-                            oldValue: (c.originalValue instanceof IdEntity) ? c.originalValue.id : c.originalValue
-                        })
-                    } catch (err) {
-                        console.log(c);
-                        throw err;
-
-                    }
-                }
-
-
-                if (changes.length > 0) {
-                    let c = await remult.repo(ChangeLog).findFirst({ where: c => c.relatedId.isEqualTo(self.id), createIfNotFound: true });
-                    c.changes = [{
-                        date: new Date(),
-                        userId: remult.user.id,
-                        userName: remult.user.name,
-                        changes
-                    }, ...c.changes];
-
-
-                    await c.save();
-                }
-
-            }
+            await recordChanges(remult, self, d => [d.pickupAddressApiResult, d.deliveryAddressApiResult]);
         }
 )
 

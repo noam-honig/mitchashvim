@@ -38,8 +38,29 @@ export class DeliveryManagerComponent implements OnInit {
       click: (d) => this.editDelivery(d),
 
     },
+
+
     {
-      icon: 'done',
+      name: 'סמן שראיתי את השינוי',
+      icon: 'visibility',
+      click: d => {
+        deliveriesClick(this.deliveries, this.remult, d, async d => {
+          d.changeSeenByDeliveryManager = !d.changeSeenByDeliveryManager;
+          d.save();
+        })
+      }
+    }, {
+      name: 'הצג שינויים',
+      icon: 'fact_check',
+      click: d => openDialog(TrackChangesComponent, x => x.args = { for: d })
+    },
+    {
+      icon: 'print',
+      name: 'סמן הודפס לנהג',
+      click: d => deliveriesClick(this.deliveries, this.remult, d, async d => d.assign({ printedToDriver: !d.printedToDriver }).save())
+    },
+    {
+      icon: 'verified',
       name: 'סמן כהושלם',
       click: d => {
         openDialog(InputAreaComponent, x => x.args = {
@@ -67,23 +88,6 @@ export class DeliveryManagerComponent implements OnInit {
           }
         })
       }
-    },
-    {
-      name: 'הצג שינויים',
-      click: d => openDialog(TrackChangesComponent, x => x.args = { for: d })
-    },
-    {
-      name: 'סמן שראיתי את השינוי',
-      click: d => {
-        deliveriesClick(this.deliveries, this.remult, d, async d => {
-          d.changeSeenByDeliveryManager = !d.changeSeenByDeliveryManager;
-          d.save();
-        })
-      }
-    },
-    {
-      name: 'סמן הודפס לנהג',
-      click: d => deliveriesClick(this.deliveries, this.remult, d, async d => d.assign({ printedToDriver: !d.printedToDriver }).save())
     }
     ]
   });

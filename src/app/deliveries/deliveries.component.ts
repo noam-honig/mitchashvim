@@ -44,7 +44,9 @@ export class DeliveriesComponent implements OnInit {
         });
       }
     }, {
+      
       name: 'הצג ארכיב',
+      icon:'unarchive',
       click: () => {
         this.showArchive = !this.showArchive;
         this.deliveries.reloadData()
@@ -58,7 +60,9 @@ export class DeliveriesComponent implements OnInit {
       showInLine: true
     },
     {
+      icon:'local_shipping',
       name: 'סמן כמוכן למשלוח',
+      visible: d => d.status == DeliveryStatus.setup,
       click: d => deliveriesClick(this.deliveries, this.remult, d,
         async d => {
           d.status = DeliveryStatus.readyForDelivery;
@@ -68,6 +72,7 @@ export class DeliveriesComponent implements OnInit {
         })
     },
     {
+      icon:'archive',
       name: 'העבר לארכיב',
       click: d => deliveriesClick(this.deliveries, this.remult, d,
         async d => {

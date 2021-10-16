@@ -4,6 +4,7 @@ import { SelectSiteComponent } from "../select-site/select-site.component";
 import { PhoneControl } from "../shared/field-types";
 import { GeocodeInformation } from "../shared/googleApiHelpers";
 import { requiredInHebrew } from "../terms";
+import { recordChanges } from "../track-changes/change-log";
 import { Roles } from "../users/roles";
 import { SiteType } from "./site-type";
 
@@ -30,7 +31,8 @@ import { SiteType } from "./site-type";
 @Entity<Site>("sites", {
     allowApiCrud: Roles.sites,
     defaultOrderBy: self => self.name
-})
+}, (o, remult) => o.saving = async self =>
+    await recordChanges(remult, self, d => [d.addressApiResult]))
 export class Site extends IdEntity {
     @Field()
     type: SiteType = SiteType.donor;
