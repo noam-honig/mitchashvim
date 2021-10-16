@@ -14,7 +14,12 @@ import { DeliveryStatus } from '../deliveries/delivery-status';
 })
 export class EditDeliveryComponent implements OnInit {
 
-  constructor(private ref: MatDialogRef<any>) { }
+  constructor(private ref: MatDialogRef<any>) {
+    ref.beforeClosed().subscribe(() => {
+      if (this.args.delivery.wasChanged())
+        this.args.delivery._.undoChanges();
+    });
+  }
   args!: {
     delivery: Delivery,
     ok?: () => void,
@@ -59,6 +64,11 @@ export class EditDeliveryComponent implements OnInit {
 
     this.pickupInfo = new DataAreaSettings({
       fields: () => [
+        [
+          d.$.pickupContactPerson,
+          d.$.pickupPhone,
+          d.$.pickupCity
+        ],
 
         [{ ...scheduleSettings, field: d.$.pickupDate! }
           , { ...scheduleSettings, field: d.$.pickupTime }
@@ -74,16 +84,17 @@ export class EditDeliveryComponent implements OnInit {
             ...scheduleSettings, field: d.$.pickupTimeConfirmed
           }
         ],
-        [
-          d.$.pickupContactPerson,
-          d.$.pickupPhone,
-          d.$.pickupCity
-        ],
+
         d.$.pickupTimeComment
       ]
     });
     this.dropOfInfo = new DataAreaSettings({
       fields: () => [
+        [
+          d.$.deliveryContactPerson,
+          d.$.deliveryPhone,
+          d.$.deliveryCity
+        ],
         [
           { ...scheduleSettings, field: d.$.deliveryDate! },
           { ...scheduleSettings, field: d.$.deliveryTime },
@@ -95,10 +106,6 @@ export class EditDeliveryComponent implements OnInit {
           }
             :
             { ...scheduleSettings, field: d.$.deliveryTimeConfirmed }
-        ], [
-          d.$.deliveryContactPerson,
-          d.$.deliveryPhone,
-          d.$.deliveryCity
         ],
 
         d.$.deliveryTimeComment,

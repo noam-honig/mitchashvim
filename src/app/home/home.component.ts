@@ -20,7 +20,7 @@ export class HomeComponent implements OnInit {
 
 
   result: any = {};
-  site = this.remult.repo(Site).create();
+  site = this.remult.repo(Site).create({address:'שנהב 4 אבן יהודה'});
 
 
   changes!: ChangeLog;

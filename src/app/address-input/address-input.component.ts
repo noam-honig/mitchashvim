@@ -95,7 +95,7 @@ export class AddressInputComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    if (this.autoInit) {
+    if (this.autoInit&&false) {
       this.initAddress(x => { });
     }
   }

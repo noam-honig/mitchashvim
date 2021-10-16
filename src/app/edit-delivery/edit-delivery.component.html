@@ -2,15 +2,15 @@
     <data-area [settings]="deliveryInfo"></data-area>
     <ng-container *ngIf="args.delivery.target && args.delivery.source">
 
-        <data-area [settings]="pickupInfo"></data-area>
         <app-address-input [field]="args.delivery.$.pickupAddress"
             [(geocodeInformation)]="args.delivery.pickupAddressApiResult" [(city)]="args.delivery.pickupCity">
         </app-address-input>
+        <data-area [settings]="pickupInfo"></data-area>
 
-        <data-area [settings]="dropOfInfo"></data-area>
         <app-address-input [field]="args.delivery.$.deliveryAddress"
             [(geocodeInformation)]="args.delivery.deliveryAddressApiResult" [(city)]="args.delivery.deliveryCity">
         </app-address-input>
+        <data-area [settings]="dropOfInfo"></data-area>
         <data-area [settings]="finalInfo"></data-area>
     </ng-container>
 </mat-dialog-content>
