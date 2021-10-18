@@ -1,6 +1,6 @@
 <table class="table-bordered">
     <thead>
-        <th>#</th>
+        <th>מזהה</th>
         <th>עיר</th>
         <th>תאריך</th>
         <th>משטחים</th>
@@ -8,17 +8,25 @@
         <th>איש קשר</th>
         <th>מסירה</th>
         <th>איש קשר</th>
+        <th>תאריך מסירה</th>
     </thead>
     <tbody>
         <tr *ngFor="let d of deliveries">
             <td>{{d.number}}</td>
             <td>{{d.pickupCity}} => {{d.deliveryCity}}</td>
-            <td>{{d.$.pickupDate?.displayValue}}</td>
+            <td>{{d.$.pickupDate?.displayValue}} {{d.pickupTime}} {{d.pickupTimeComment}}
+                <strong *ngIf="!d.pickupTimeConfirmed">טרם תואם</strong>
+
+            </td>
             <td>{{contentText(d)}}</td>
             <td><strong> {{d.source.name}} </strong><br /> {{d.pickupAddress}} </td>
             <td>{{d.pickupContactPerson}}<br />{{d.pickupPhone}} </td>
-            <td>{{d.target.name}}<br /> {{d.deliveryAddress}} </td>
+            <td>
+                <strong>{{d.target.name}}</strong><br /> {{d.deliveryAddress}}
+            </td>
             <td>{{d.deliveryContactPerson}}<br />{{d.deliveryPhone}} </td>
+            <td>{{d.$.deliveryDate?.displayValue}} {{d.deliveryTime}} {{d.deliveryTimeComment}}
+                <strong *ngIf="!d.deliveryTimeConfirmed">טרם תואם</strong>
 
         </tr>
     </tbody>

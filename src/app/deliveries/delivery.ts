@@ -30,7 +30,7 @@ import { DeliveryType } from "./delivery-type";
 
 export class Delivery extends IdEntity {
     @DataControl({ width: '70' })
-    @IntegerField({ allowApiUpdate: false, caption: 'מספר' })
+    @IntegerField({ allowApiUpdate: false, caption: 'מזהה' })
     number: number = 0;
     @DataControl({ width: '70' })
     @Field()

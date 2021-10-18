@@ -9,7 +9,10 @@
     "test": "ng test",
     "dev-ng": "ng serve  --proxy-config proxy.conf.json",
     "dev-node": "ts-node-dev --project tsconfig.server.json src/server/",
-    "release": "npm run build-local && copyfiles -V -a package.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/mitchashvim.git master"
+    "release-step-1": "npm run build-local && copyfiles -V -a package.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy'",
+    "release":"npm run release-step-1 && git push -f https://git.heroku.com/mitchashvim.git master",
+    "release-test":"npm run release-step-1 && git push -f https://git.heroku.com/mitcttest.git master"
+
   },
   "private": true,
   "dependencies": {

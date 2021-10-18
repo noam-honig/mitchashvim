@@ -21,7 +21,7 @@ async function startup() {
     let dataProvider: DataProvider | undefined;
 
     // use json db for dev, and postgres for production
-    if (!process.env.DEV_MODE || true) {//if you want to use postgres for development - change this if to be if(true)
+    if (!process.env.DEV_MODE ) {//if you want to use postgres for development - change this if to be if(true)
         const pool = new Pool({
             connectionString: process.env.DATABASE_URL,
             ssl: process.env.DEV_MODE ? false : { rejectUnauthorized: false }// use ssl in production but not in development. the `rejectUnauthorized: false`  is required for deployment to heroku etc...

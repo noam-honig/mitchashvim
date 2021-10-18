@@ -81,7 +81,8 @@ export class AddressInputComponent implements AfterViewInit {
           }],
           status: "OK"
         });
-        consumer(g);
+        if (consumer)
+          consumer(g);
         this.geocodeInformationChange.emit(g);
         this.cityChange.emit(g.getCity());
 
@@ -95,7 +96,7 @@ export class AddressInputComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    if (this.autoInit&&false) {
+    if (this.autoInit && false) {
       this.initAddress(x => { });
     }
   }
